@@ -1,0 +1,9 @@
+Comandos para criar aplicação NESTJS
+
+npx @nestjs/cli new store --> Onde "Store" é o nome do meu projeto.
+
+npm install class-validator class-transformer
+
+npm install uuid --> Para gerar UUID automatico
+
+npm install -D @types/uuid --> drives do UUID
