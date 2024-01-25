@@ -13,27 +13,19 @@ import { UserEntity } from './user.entity';
 import { v4 as uuid } from 'uuid';
 import { ListUserDTO } from './dto/listUser.dto';
 import { UpdateUserDTO } from './dto/updateUser.dto';
+import { UserService } from './user.service';
 
 @Controller('/users')
 export class UserController {
-  constructor(private userRepository: UserRepository) {}
-
-  private maskUser(userEntity: UserEntity) {
-    const usersList = new ListUserDTO(
-      userEntity.id,
-      userEntity.name,
-      userEntity.email,
-    );
-    return usersList;
-  }
+  constructor(
+    private userRepository: UserRepository,
+    private userService: UserService,
+  ) {}
 
   @Get()
   async listUsers() {
-    const usersSaved = await this.userRepository.listUsers();
-    const usersList = usersSaved.map(
-      (user) => new ListUserDTO(user.id, user.name, user.email),
-    );
-    return usersList;
+    const usersSaved = await this.userService.listUsers();
+    return usersSaved;
   }
 
   @Post()
@@ -44,7 +36,7 @@ export class UserController {
     userEntity.email = dataUser.email;
     userEntity.password = dataUser.password;
 
-    this.userRepository.save(userEntity);
+    this.userService.createUsers(userEntity);
 
     return {
       user: new ListUserDTO(userEntity.id, userEntity.name, userEntity.email),
@@ -54,23 +46,13 @@ export class UserController {
 
   @Put('/:id')
   async updateUser(@Param('id') id: string, @Body() newDatas: UpdateUserDTO) {
-    const userUpdated = await this.userRepository.updateUser(id, newDatas);
-    const usersList = this.maskUser(userUpdated);
-
-    return {
-      user: usersList,
-      message: `Usuário atualizado com sucesso`,
-    };
+    const userUpdated = await this.userService.updateUser(id, newDatas);
+    return { message: `Usuário atualizado com sucesso` };
   }
 
   @Delete('/:id')
   async deleteUser(@Param('id') id: string) {
-    const userRemoved = await this.userRepository.deleteUser(id);
-    const usersList = this.maskUser(userRemoved);
-
-    return {
-      usuario: usersList,
-      message: 'Usuário deletado com sucesso',
-    };
+    const userRemoved = await this.userService.deleteUsers(id);
+    return { message: 'Usuário deletado com sucesso' };
   }
 }

@@ -12,14 +12,18 @@ import { CreateProductDTO } from './dto/createProduct.dto';
 import { v4 as uuid } from 'uuid';
 import { ProductEntity } from './product.entity';
 import { UpdateProductDTO } from './dto/updateProduct.dto';
+import { ProductService } from './product.service';
 
 @Controller('/product')
 export class ProductController {
-  constructor(private readonly productRepository: ProductRepository) {}
+  constructor(
+    private productRepository: ProductRepository,
+    private productService: ProductService,
+  ) {}
 
   @Get()
   async listProducts() {
-    const listProducts = await this.productRepository.listProducts();
+    const listProducts = await this.productService.listProducts();
     return listProducts;
   }
 
@@ -36,7 +40,7 @@ export class ProductController {
     productEntity.caracteristics = dataProduct.caracteristics;
     productEntity.images = dataProduct.images;
 
-    const productSaved = this.productRepository.createProduct(productEntity);
+    const productSaved = this.productService.createProduct(productEntity);
     return { productSaved, message: `Produto cadastrado com sucesso` };
   }
 
