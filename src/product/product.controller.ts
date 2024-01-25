@@ -16,10 +16,7 @@ import { ProductService } from './product.service';
 
 @Controller('/product')
 export class ProductController {
-  constructor(
-    private productRepository: ProductRepository,
-    private productService: ProductService,
-  ) {}
+  constructor(private productService: ProductService) {}
 
   @Get()
   async listProducts() {
@@ -46,7 +43,7 @@ export class ProductController {
 
   @Delete('/:id')
   async deleteProduct(@Param('id') id: string) {
-    const productdeleted = await this.productRepository.deleteProduct(id);
+    const productdeleted = await this.productService.deleteProduct(id);
 
     return {
       mensage: 'produto deletado com sucesso',
@@ -59,7 +56,7 @@ export class ProductController {
     @Param('id') id: string,
     @Body() dataProduct: UpdateProductDTO,
   ) {
-    const productUpdated = await this.productRepository.updateProduct(
+    const productUpdated = await this.productService.updateProduct(
       id,
       dataProduct,
     );
