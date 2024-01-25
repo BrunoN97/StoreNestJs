@@ -1,9 +1,17 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ProductRepository } from './product.repository';
 import { CreateProductDTO } from './dto/createProduct.dto';
 import { v4 as uuid } from 'uuid';
 import { ProductEntity } from './product.entity';
-import { ListProductDTO } from './dto/listProduct.dto';
+import { UpdateProductDTO } from './dto/updateProduct.dto';
 
 @Controller('/product')
 export class ProductController {
@@ -16,7 +24,7 @@ export class ProductController {
   }
 
   @Post()
-  async createProducts(@Body() dataProduct: CreateProductDTO) {
+  async createProduct(@Body() dataProduct: CreateProductDTO) {
     const productEntity = new ProductEntity();
     productEntity.id = uuid();
     productEntity.name = dataProduct.name;
@@ -30,5 +38,31 @@ export class ProductController {
 
     const productSaved = this.productRepository.createProduct(productEntity);
     return { productSaved, message: `Produto cadastrado com sucesso` };
+  }
+
+  @Delete('/:id')
+  async deleteProduct(@Param('id') id: string) {
+    const productdeleted = await this.productRepository.deleteProduct(id);
+
+    return {
+      mensage: 'produto deletado com sucesso',
+      produto: productdeleted,
+    };
+  }
+
+  @Put('/:id')
+  async updateProduct(
+    @Param('id') id: string,
+    @Body() dataProduct: UpdateProductDTO,
+  ) {
+    const productUpdated = await this.productRepository.updateProduct(
+      id,
+      dataProduct,
+    );
+
+    return {
+      mensage: 'produto atualizado com sucesso',
+      produto: productUpdated,
+    };
   }
 }
